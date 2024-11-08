@@ -26,7 +26,7 @@ function createCard(cardData, onCardDelete) {
     cardTitle.textContent = cardData.name;                                             // Устанавливаем название
 
     // Добавляем обработчик клика для удаления карточки
-    //deleteButton.addEventListener('click', handleCardDelete);                     // - тоже работает, почему?
+    //deleteButton.addEventListener('click', handleCardDelete);                     // - тоже работает..
     deleteButton.addEventListener('click', (event) => { onCardDelete (event)});
 
     return cardElement; // Возвращаем готовый элемент карточки
