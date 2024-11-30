@@ -1,6 +1,4 @@
-import { openPopup, closePopup } from './modal.js'
-import { cardTemplate, placesList, openImagePopup } from './index.js'
-
+const cardTemplate = document.querySelector('#card-template').content; 
 
 // Функция для создания карточки 
 export function createCard(cardData, onCardDelete, onCardLike, onLargeImage) { 
@@ -18,18 +16,14 @@ export function createCard(cardData, onCardDelete, onCardLike, onLargeImage) {
 
   // Добавляем обработчик клика для удаления карточки 
   //deleteButton.addEventListener('click', handleCardDelete);                     // - тоже работает.. 
-  deleteButton.addEventListener('click', (event) => { onCardDelete (event)}); 
-
-  cardImage.addEventListener('click', () => { 
-      openImagePopup(cardData.link, cardData.name); 
-  });
+  deleteButton.addEventListener('click', (event) => { onCardDelete (event)});
 
   // Добавляем обработчик клика для лайка
   likeButton.addEventListener('click', (event) => { onCardLike(event);});
   
   // Добавляем обработчик клика по изображению
   cardImage.addEventListener('click', () => {
-      openImagePopup(cardData.link, cardData.name); // Открываем попап с изображением
+    onLargeImage(cardData.link, cardData.name); // Открываем попап с изображением
   });
 
   return cardElement; // Возвращаем готовый элемент карточки 

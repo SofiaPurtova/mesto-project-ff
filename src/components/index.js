@@ -1,21 +1,10 @@
-// @todo: Темплейт карточки +
-
-// @todo: DOM узлы +
-
-// @todo: Функция создания карточки +
-
-// @todo: Функция удаления карточки +
-
-// @todo: Вывести карточки на страницу +
-
 import '../pages/index.css';
 import { initialCards } from './cards.js'
 import { createCard, handleCardDelete, handleCardLike } from './card.js'
 import { openPopup, closePopup } from './modal.js'
 
 // Копируем шаблон карточки 
-export const cardTemplate = document.querySelector('#card-template').content; 
-export const placesList = document.querySelector('.places__list'); 
+const placesList = document.querySelector('.places__list'); 
  
 // Функция для отображения всех карточек 
 function renderCards(cards) {                                        // Передаю в функцию массив, который надо вывести 
@@ -29,21 +18,38 @@ function renderCards(cards) {                                        // Пере
 renderCards(initialCards); 
  
 // Переменные для модальных окон 
-export const editPopup = document.querySelector('.popup_type_edit'); 
-export const newCardPopup = document.querySelector('.popup_type_new-card'); 
-export const imagePopup = document.querySelector('.popup_type_image'); 
-export const closeButtons = document.querySelectorAll('.popup__close');  
+const editPopup = document.querySelector('.popup_type_edit'); 
+const newCardPopup = document.querySelector('.popup_type_new-card'); 
+const imagePopup = document.querySelector('.popup_type_image'); 
+const closeButtons = document.querySelectorAll('.popup__close');  
  
+const nameInput = editPopup.querySelector('.popup__input_type_name');
+const descriptionInput = editPopup.querySelector('.popup__input_type_description');
+// Получаем значения из профиля
+const profileTitle = document.querySelector('.profile__title').textContent;  
+const profileDescription = document.querySelector('.profile__description').textContent;
+
+
+// Получаем все попапы 
+const popups = document.querySelectorAll('.popup'); 
+
+// Добавляем класс 'popup_is-animated' ко всем попапам 
+popups.forEach(popup => {
+    popup.classList.add('popup_is-animated');
+});
+
+// Добавляем обработчик клика по оверлею
+popups.forEach((popup) => {
+    popup.addEventListener("mousedown", (evt) => {
+        if (evt.target.classList.contains("popup")) {
+            closePopup(popup);
+        }
+    });
+}); 
 
  
 // Открытие модального окна редактирования профиля  
-document.querySelector('.profile__edit-button').addEventListener('click', () => {  
-    const nameInput = editPopup.querySelector('.popup__input_type_name');  
-    const descriptionInput = editPopup.querySelector('.popup__input_type_description');  
-
-    // Получаем значения из профиля
-    const profileTitle = document.querySelector('.profile__title').textContent;  
-    const profileDescription = document.querySelector('.profile__description').textContent;  
+document.querySelector('.profile__edit-button').addEventListener('click', () => { 
 
     // Заполняем поля ввода значениями из профиля
     nameInput.value = profileTitle;  
@@ -53,33 +59,25 @@ document.querySelector('.profile__edit-button').addEventListener('click', () => 
 });
 
 // Находим форму в DOM
-const formElement = editPopup.querySelector('.popup__form');
-
-// Находим поля формы в DOM
-const nameInput = editPopup.querySelector('.popup__input_type_name');  
-const jobInput = editPopup.querySelector('.popup__input_type_description');  
+const profileFormElement = editPopup.querySelector('.popup__form');  
 
 // Обработчик «отправки» формы
-function handleFormSubmit(evt) {  
+function handleProfileFormSubmit(evt) {  
     evt.preventDefault(); // Отменяем стандартную отправку формы.
 
     // Получаем значение полей jobInput и nameInput из свойства value
     const newName = nameInput.value;  
-    const newJob = jobInput.value;
-
-    // Выбираем элементы, куда должны быть вставлены значения полей
-    const profileTitle = document.querySelector('.profile__title');  
-    const profileDescription = document.querySelector('.profile__description');  
+    const newJob = descriptionInput.value;
 
     // Вставляем новые значения с помощью textContent
-    profileTitle.textContent = newName;  
-    profileDescription.textContent = newJob;  
+    profileTitle = newName;  
+    profileDescription = newJob;  
 
     closePopup(editPopup); // Закрываем попап после сохранения изменений
 }
 
 // Прикрепляем обработчик к форме
-formElement.addEventListener('submit', handleFormSubmit);
+profileFormElement.addEventListener('submit', handleProfileFormSubmit);
  
 // Открытие модального окна добавления новой карточки
 document.querySelector('.profile__add-button').addEventListener('click', () => {  
@@ -137,7 +135,7 @@ function handleNewCardFormSubmit(evt) {
 
     // Добавляем карточку на страницу
     const cardsContainer = document.querySelector('.places__list'); // Контейнер для карточек
-    cardsContainer.append(newCard); // Или append, в зависимости от желаемого поведения
+    cardsContainer.prepend(newCard); // Или append, в зависимости от желаемого поведения
 
     closePopup(newCardPopup); // Закрываем попап после добавления карточки
 
