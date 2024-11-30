@@ -8,13 +8,15 @@
 
 // @todo: Вывести карточки на страницу +
 
+import './pages/index.css';
+
 // Копируем шаблон карточки
 const cardTemplate = document.querySelector('#card-template').content;
 const placesList = document.querySelector('.places__list');
 
 // Функция для создания карточки
 function createCard(cardData, onCardDelete) {
-    const cardElement = cardTemplate.cloneNode(true);                                           // Клонируем шаблон карточки
+    const cardElement = cardTemplate.querySelector('.card').cloneNode(true);                                           // Клонируем шаблон карточки
 
     // Устанавливаем значения имени и ссылки на изображение
     const cardImage = cardElement.querySelector('.card__image');
