@@ -15,8 +15,8 @@ export function createCard(cardData, onCardDelete, onCardLike, onLargeImage) {
   cardTitle.textContent = cardData.name;                                             // Устанавливаем название 
 
   // Добавляем обработчик клика для удаления карточки 
-  //deleteButton.addEventListener('click', handleCardDelete);                     // - тоже работает.. 
-  deleteButton.addEventListener('click', (event) => { onCardDelete (event)});
+  deleteButton.addEventListener('click', handleCardDelete);                      
+  //deleteButton.addEventListener('click', (event) => { onCardDelete (event)});
 
   // Добавляем обработчик клика для лайка
   likeButton.addEventListener('click', (event) => { onCardLike(event);});
