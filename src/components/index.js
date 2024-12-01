@@ -22,12 +22,15 @@ const editPopup = document.querySelector('.popup_type_edit');
 const newCardPopup = document.querySelector('.popup_type_new-card'); 
 const imagePopup = document.querySelector('.popup_type_image'); 
 const closeButtons = document.querySelectorAll('.popup__close');  
+
+const titleInput = document.querySelector('.popup__input_type_card-name');
+const imageInput = document.querySelector('.popup__input_type_url');
  
 const nameInput = editPopup.querySelector('.popup__input_type_name');
 const descriptionInput = editPopup.querySelector('.popup__input_type_description');
 // Получаем значения из профиля
-const profileTitle = document.querySelector('.profile__title').textContent;  
-const profileDescription = document.querySelector('.profile__description').textContent;
+const profileTitle = document.querySelector('.profile__title');  
+const profileDescription = document.querySelector('.profile__description');
 
 
 // Получаем все попапы 
@@ -52,8 +55,8 @@ popups.forEach((popup) => {
 document.querySelector('.profile__edit-button').addEventListener('click', () => { 
 
     // Заполняем поля ввода значениями из профиля
-    nameInput.value = profileTitle;  
-    descriptionInput.value = profileDescription;  
+    nameInput.value = profileTitle.textContent;  
+    descriptionInput.value = profileDescription.textContent;  
 
     openPopup(editPopup);  
 });
@@ -70,8 +73,8 @@ function handleProfileFormSubmit(evt) {
     const newJob = descriptionInput.value;
 
     // Вставляем новые значения с помощью textContent
-    profileTitle = newName;  
-    profileDescription = newJob;  
+    profileTitle.textContent = newName;  
+    profileDescription.textContent = newJob;  
 
     closePopup(editPopup); // Закрываем попап после сохранения изменений
 }
@@ -109,9 +112,9 @@ closeButtons.forEach(button => {
 // Открытие модального окна добавления новой карточки 
 document.querySelector('.profile__add-button').addEventListener('click', () => {   
     openPopup(newCardPopup);   
-    // Обнуляем поля формы, если вы хотите начать с чистого листа 
-    newCardPopup.querySelector('.popup__input_type_card-name').value = '';
-    newCardPopup.querySelector('.popup__input_type_url').value = '';
+    // Обнуляем поля формы
+    titleInput.value = '';
+    imageInput.value = '';
 });  
 
 // Находим форму добавления карточки в DOM 
@@ -122,8 +125,8 @@ function handleNewCardFormSubmit(evt) {
     evt.preventDefault(); // Отменяем стандартную отправку формы. 
     
     // Получаем значения из полей ввода (например, заголовок и описание карточки)
-    const titleInput = newCardPopup.querySelector('.popup__input_type_card-name');
-    const imageInput = newCardPopup.querySelector('.popup__input_type_url'); // предположим, что это поле для ссылки на изображение
+    /*const titleInput = newCardPopup.querySelector('.popup__input_type_card-name');
+    const imageInput = newCardPopup.querySelector('.popup__input_type_url'); // предположим, что это поле для ссылки на изображение*/
 
     const cardData = {
         name: titleInput.value,
@@ -135,7 +138,7 @@ function handleNewCardFormSubmit(evt) {
 
     // Добавляем карточку на страницу
     const cardsContainer = document.querySelector('.places__list'); // Контейнер для карточек
-    cardsContainer.prepend(newCard); // Или append, в зависимости от желаемого поведения
+    cardsContainer.prepend(newCard);
 
     closePopup(newCardPopup); // Закрываем попап после добавления карточки
 
