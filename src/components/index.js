@@ -1,7 +1,8 @@
 import '../pages/index.css';
-import { initialCards } from './cards.js'
-import { createCard, handleCardDelete, handleCardLike } from './card.js'
-import { openPopup, closePopup } from './modal.js'
+import { initialCards } from './cards.js';
+import { enableValidation, clearValidation } from './validate.js';
+import { createCard, handleCardDelete, handleCardLike } from './card.js';
+import { openPopup, closePopup } from './modal.js';
 
 // Копируем шаблон карточки 
 const placesList = document.querySelector('.places__list'); 
@@ -50,14 +51,24 @@ popups.forEach((popup) => {
     });
 }); 
 
+const settings = {
+    formSelector: '.popup__form',
+    inputSelector: '.popup__input',
+    submitButtonSelector: '.popup__button',
+    inactiveButtonClass: 'button_inactive',
+    inputErrorClass: 'form__input_type_error',
+    errorClass: 'form__input-error_active'
+};
+  
+enableValidation(settings);
+  
  
 // Открытие модального окна редактирования профиля  
 document.querySelector('.profile__edit-button').addEventListener('click', () => { 
-
     // Заполняем поля ввода значениями из профиля
     nameInput.value = profileTitle.textContent;  
     descriptionInput.value = profileDescription.textContent;  
-
+    clearValidation(editPopup);
     openPopup(editPopup);  
 });
 
@@ -67,7 +78,7 @@ const profileFormElement = editPopup.querySelector('.popup__form');
 // Обработчик «отправки» формы
 function handleProfileFormSubmit(evt) {  
     evt.preventDefault(); // Отменяем стандартную отправку формы.
-
+    clearValidation(editPopup);
     // Получаем значение полей jobInput и nameInput из свойства value
     const newName = nameInput.value;  
     const newJob = descriptionInput.value;
@@ -84,6 +95,7 @@ profileFormElement.addEventListener('submit', handleProfileFormSubmit);
  
 // Открытие модального окна добавления новой карточки
 document.querySelector('.profile__add-button').addEventListener('click', () => {  
+    clearValidation(newCardPopup);
     openPopup(newCardPopup);  
 });
 
@@ -111,6 +123,7 @@ closeButtons.forEach(button => {
 
 // Открытие модального окна добавления новой карточки 
 document.querySelector('.profile__add-button').addEventListener('click', () => {   
+    clearValidation(newCardPopup);
     openPopup(newCardPopup);   
     // Обнуляем поля формы
     titleInput.value = '';
@@ -123,7 +136,7 @@ const newCardFormElement = newCardPopup.querySelector('.popup__form');
 // Обработчик «отправки» формы добавления карточки 
 function handleNewCardFormSubmit(evt) {   
     evt.preventDefault(); // Отменяем стандартную отправку формы. 
-    
+    clearValidation(newCardPopup);
     // Получаем значения из полей ввода (например, заголовок и описание карточки)
     /*const titleInput = newCardPopup.querySelector('.popup__input_type_card-name');
     const imageInput = newCardPopup.querySelector('.popup__input_type_url'); // предположим, что это поле для ссылки на изображение*/
@@ -149,4 +162,3 @@ function handleNewCardFormSubmit(evt) {
 
 // Прикрепляем обработчик к форме добавления карточки
 newCardFormElement.addEventListener('submit', handleNewCardFormSubmit);
-
