@@ -1,70 +1,3 @@
-
-
-
-/*
-// Получаем элементы формы и кнопки
-const editProfileForm = document.querySelector('.popup_type_edit');
-const nameInput = editProfileForm.querySelector('.popup__input_type_name');
-const descriptionInput = editProfileForm.querySelector('.popup__input_type_description');
-const submitButton = editProfileForm.querySelector('.popup__button');
-const nameError = document.createElement('p');
-// nameError.classList.add('name__input-error');
-const descriptionError = document.createElement('p');
-// descriptionError.classList.add('description__input-error');
-
-// Добавляем текст ошибки ниже каждого поля
-
-descriptionError.className = 'error-message';
-
-descriptionInput.parentNode.insertBefore(descriptionError, descriptionInput.nextSibling);
-
-// Регулярные выражения для валидации
-const nameRegex = /^[A-Za-zА-Яа-яЁё\s\-]{2,40}$/;
-const descriptionRegex = /^[A-Za-zА-Яа-яЁё\s\-]{2,200}$/;
-
-function validateForm() {
-    // Очистить предыдущие ошибки
-    nameError.textContent = '';
-    descriptionError.textContent = '';
-    let valid = true;
-
-    // Валидация имени
-    if (!nameRegex.test(nameInput.value)) {
-        nameError.textContent = 'Имя должно содержать от 2 до 40 символов и допускаются только буквы, дефисы и пробелы.';
-        valid = false;
-        nameError.className = 'error-message';
-        nameInput.parentNode.insertBefore(nameError, nameInput.nextSibling);
-    }
-
-    // Валидация описания
-    if (!descriptionRegex.test(descriptionInput.value)) {
-        descriptionError.textContent = 'Описание должно содержать от 2 до 200 символов и допускаются только буквы, дефисы и пробелы.';
-        valid = false;
-    }
-
-    // Установить состояние кнопки "Сохранить"
-    submitButton.disabled = !valid;
-}
-
-editProfileForm.addEventListener('input', validateForm);
-
-// Сброс ошибок при закрытии модального окна
-function clearValidationErrors() {
-    nameError.textContent = '';
-    descriptionError.textContent = '';
-    submitButton.disabled = true; // Деактивировать по умолчанию
-}
-
-document.querySelector('.popup_type_edit .popup__close').addEventListener('click', clearValidationErrors);
-
-// Опционально, можно вызвать эту функцию при открытии окна
-export function openEditProfilePopup() {
-    clearValidationErrors();
-    //nameInput.value = 'Жак-Ив Кусто'; // Пример валидных данных
-    //descriptionInput.value = 'Исследователь океана'; // Пример валидных данных
-    validateForm(); // Перепроверяем валидность при открытии
-}*/
-
 const cfg = {
     formSelector: '.popup__form',
     inputSelector: '.popup__input',
@@ -85,7 +18,7 @@ const showError = (formElement, inputElement, errorMessage) => {
 const hideError = (formElement, inputElement) => {
     const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
     inputElement.classList.remove(cfg.inputErrorClass);
-    errorElement.textContent = '';
+    errorElement.textContent = " ";
     errorElement.classList.remove(cfg.errorClass);
 }
 

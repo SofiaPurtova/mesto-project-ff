@@ -3,33 +3,30 @@ import { initialCards } from './cards.js';
 import { enableValidation, clearValidation } from './validate.js';
 import { createCard, handleCardDelete, handleCardLike } from './card.js';
 import { openPopup, closePopup } from './modal.js';
+import { getProfileInfo, getInitialCards, patchProfileInfo, postCard, patchAvatar } from './api.js';
 
 // Копируем шаблон карточки 
 const placesList = document.querySelector('.places__list'); 
  
-// Функция для отображения всех карточек 
-function renderCards(cards) {                                        // Передаю в функцию массив, который надо вывести 
-    cards.forEach(card => { 
-        const cardElement = createCard(card, handleCardDelete, handleCardLike, openImagePopup);    // Создаем карточку 
-        placesList.append(cardElement);                           // Добавляем карточку в список 
-    }); 
-  }
-
 // Вызываем функцию для рендеринга карточек 
-renderCards(initialCards); 
+//renderCards(initialCards); 
  
 // Переменные для модальных окон 
-const editPopup = document.querySelector('.popup_type_edit'); 
+const editPopup = document.querySelector('.popup_type_edit');
+const editAvatarPopup = document.querySelector('.popup_type_edit-avatar');
 const newCardPopup = document.querySelector('.popup_type_new-card'); 
 const imagePopup = document.querySelector('.popup_type_image'); 
 const closeButtons = document.querySelectorAll('.popup__close');  
 
 const titleInput = document.querySelector('.popup__input_type_card-name');
-const imageInput = document.querySelector('.popup__input_type_url');
- 
+const imageInput = document.querySelector('.popup__input_type_url'); // =avatarInput
+
+const avatarInput = document.querySelector('.popup__input_type_url-avatar');
+
 const nameInput = editPopup.querySelector('.popup__input_type_name');
 const descriptionInput = editPopup.querySelector('.popup__input_type_description');
 // Получаем значения из профиля
+const profileAvatar = document.querySelector('.profile__image');
 const profileTitle = document.querySelector('.profile__title');  
 const profileDescription = document.querySelector('.profile__description');
 
@@ -56,19 +53,38 @@ const settings = {
     inputSelector: '.popup__input',
     submitButtonSelector: '.popup__button',
     inactiveButtonClass: 'button_inactive',
-    inputErrorClass: 'form__input_type_error',
-    errorClass: 'form__input-error_active'
+    inputErrorClass: 'form__input_type_error',   // мой класс
+    errorClass: 'form__input-error_active'      // тоже мой класс 
 };
   
-enableValidation(settings);
+enableValidation(settings);                   // включаю валидацию
   
- 
+Promise.all([getProfileInfo(), getInitialCards()])
+    .then(([userInfo, cards]) => {
+        profileTitle.textContent = userInfo.name;
+        profileDescription.textContent = userInfo.about;
+        profileAvatar.style = `background-image: url('${userInfo.avatar}')`;
+        renderCards(cards, userInfo);
+    })
+    .catch((err) => {
+        console.log(`Ошибка ${err}`);
+    })
+
+// Функция для отображения всех карточек 
+function renderCards(cards, userInfo) {                                                                        // Передаю в функцию массив, который надо вывести 
+    cards.forEach(card => { 
+        const cardElement = createCard(card, userInfo, handleCardDelete, handleCardLike, openImagePopup);    // Создаем карточку 
+        placesList.append(cardElement);                                                           // Добавляем карточку в список 
+    }); 
+  }
+
+
 // Открытие модального окна редактирования профиля  
 document.querySelector('.profile__edit-button').addEventListener('click', () => { 
     // Заполняем поля ввода значениями из профиля
     nameInput.value = profileTitle.textContent;  
     descriptionInput.value = profileDescription.textContent;  
-    clearValidation(editPopup);
+    clearValidation(editPopup);       // очищаем ошибки валидации формы и делаем кнопку неактивной 
     openPopup(editPopup);  
 });
 
@@ -78,26 +94,29 @@ const profileFormElement = editPopup.querySelector('.popup__form');
 // Обработчик «отправки» формы
 function handleProfileFormSubmit(evt) {  
     evt.preventDefault(); // Отменяем стандартную отправку формы.
+    renderLoading(evt, 'Сохранение...');
     clearValidation(editPopup);
     // Получаем значение полей jobInput и nameInput из свойства value
     const newName = nameInput.value;  
     const newJob = descriptionInput.value;
 
-    // Вставляем новые значения с помощью textContent
-    profileTitle.textContent = newName;  
-    profileDescription.textContent = newJob;  
-
-    closePopup(editPopup); // Закрываем попап после сохранения изменений
+    // Обновляем информацию о профиле через API
+    patchProfileInfo(newName, newJob)
+        .then((userInfo) => {
+            profileTitle.textContent = userInfo.name;   
+            profileDescription.textContent = userInfo.about;   
+            closePopup(editPopup); 
+        })
+        .catch((err) => {
+            console.log(`Ошибка при обновлении информации о пользователе: ${err.status}`); 
+        })
+        .finally(() => {
+            renderLoading(evt, 'Сохранить');
+        });
 }
 
 // Прикрепляем обработчик к форме
 profileFormElement.addEventListener('submit', handleProfileFormSubmit);
- 
-// Открытие модального окна добавления новой карточки
-document.querySelector('.profile__add-button').addEventListener('click', () => {  
-    clearValidation(newCardPopup);
-    openPopup(newCardPopup);  
-});
 
 // Функция для открытия попапа с изображением 
 export function openImagePopup(link, name) {  
@@ -119,7 +138,41 @@ closeButtons.forEach(button => {
     }); 
 });
 
+// Открытие модального окна редактирования аватара профиля
+profileAvatar.addEventListener('click', () => {
+    avatarInput.value = getComputedStyle(profileAvatar).backgroundImage.slice(5, -2);
+    openPopup(editAvatarPopup);
+    clearValidation(editAvatarPopup);
+    
+});
 
+// Находим форму добавления аватара в DOM
+const newAvatarElement = editAvatarPopup.querySelector('.popup__form');
+
+// Обработчик «отправки» формы добавления аватара
+function handleNewAvatarFormSubmit(evt) {
+    evt.preventDefault();
+    renderLoading(evt, 'Сохранение...');
+    clearValidation(editAvatarPopup);
+
+    const newAvatar = avatarInput.value;
+    console.log('Новый аватар:', newAvatar);
+
+    // Обновляем информацию об аватаре через API
+    patchAvatar(newAvatar)
+    .then((userInfo) => {
+        closePopup(editAvatarPopup);
+        profileAvatar.style = `background-image: url('${userInfo.avatar}')`;
+    })
+    .catch((err) => {
+        console.log(`Ошибка при обновлении аватара пользователя: ${err.status}`); 
+    })
+    .finally(() => {
+        renderLoading(evt, 'Сохранить');
+    });
+}
+// Прикрепляем обработчик к форме
+newAvatarElement.addEventListener('submit',  handleNewAvatarFormSubmit);
 
 // Открытие модального окна добавления новой карточки 
 document.querySelector('.profile__add-button').addEventListener('click', () => {   
@@ -136,29 +189,35 @@ const newCardFormElement = newCardPopup.querySelector('.popup__form');
 // Обработчик «отправки» формы добавления карточки 
 function handleNewCardFormSubmit(evt) {   
     evt.preventDefault(); // Отменяем стандартную отправку формы. 
+    renderLoading(evt, 'Создание...');
     clearValidation(newCardPopup);
-    // Получаем значения из полей ввода (например, заголовок и описание карточки)
-    /*const titleInput = newCardPopup.querySelector('.popup__input_type_card-name');
-    const imageInput = newCardPopup.querySelector('.popup__input_type_url'); // предположим, что это поле для ссылки на изображение*/
 
     const cardData = {
         name: titleInput.value,
         link: imageInput.value
     };
 
-    // Создаем новую карточку
-    const newCard = createCard(cardData, handleCardDelete, handleCardLike, openImagePopup);
-
-    // Добавляем карточку на страницу
-    const cardsContainer = document.querySelector('.places__list'); // Контейнер для карточек
-    cardsContainer.prepend(newCard);
-
-    closePopup(newCardPopup); // Закрываем попап после добавления карточки
-
-    // Сбрасываем поля ввода
-    titleInput.value = '';
-    imageInput.value = '';
+    postCard(cardData.name, cardData.link)
+        .then((newCard) => {
+            closePopup(newCardPopup);
+            //renderCards([newCard], userInfo);
+            const cardElement = createCard(newCard, userInfo, handleCardDelete, handleCardLike, openImagePopup);
+            placesList.prepend(cardElement);
+            console.log(newCard.link);
+        })
+        .catch((err) => {
+            console.log(`Ошибка при добавлении новой карточки: ${err.status}`); 
+        })
+        .finally(() => {
+            renderLoading(evt, 'Создать');
+        });
 }
 
 // Прикрепляем обработчик к форме добавления карточки
 newCardFormElement.addEventListener('submit', handleNewCardFormSubmit);
+
+// Отрисовка состояния загрузки
+function renderLoading(evt, text) {
+    const btn = evt.target.querySelector('.popup__button');
+    btn.textContent = text;
+  }

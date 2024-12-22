@@ -7,6 +7,26 @@
   background-size: cover;
   background-position: center;
   margin: 0 29px 0 0;
+  position: relative;
+}
+
+.profile__image::before {
+  position: absolute;
+  content: "";
+  block-size: 100%;
+  inline-size: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  background-image: url("../../../images/editAvatar.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  z-index: 1;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+}
+
+.profile__image:hover::before {
+  opacity: 1;
 }
 
 @media screen and (max-width: 740px) {

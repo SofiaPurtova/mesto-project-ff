@@ -5,3 +5,17 @@
   background: #fff;
   padding: 25px 20px;
 }
+
+.button-like-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: center;
+}
+
+.button-like-count {
+  font-weight: 400;
+    font-size: 13px;
+    line-height: 16px;
+    color: #000000;
+}
