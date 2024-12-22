@@ -58,9 +58,12 @@ const settings = {
 };
   
 enableValidation(settings);                   // включаю валидацию
-  
+
+let userInf = null;
+
 Promise.all([getProfileInfo(), getInitialCards()])
     .then(([userInfo, cards]) => {
+        userInf = userInfo;
         profileTitle.textContent = userInfo.name;
         profileDescription.textContent = userInfo.about;
         profileAvatar.style = `background-image: url('${userInfo.avatar}')`;
@@ -73,7 +76,7 @@ Promise.all([getProfileInfo(), getInitialCards()])
 // Функция для отображения всех карточек 
 function renderCards(cards, userInfo) {                                                                        // Передаю в функцию массив, который надо вывести 
     cards.forEach(card => { 
-        const cardElement = createCard(card, userInfo, handleCardDelete, handleCardLike, openImagePopup);    // Создаем карточку 
+        const cardElement = createCard(card, userInf, handleCardDelete, handleCardLike, openImagePopup);    // Создаем карточку 
         placesList.append(cardElement);                                                           // Добавляем карточку в список 
     }); 
   }
@@ -201,7 +204,7 @@ function handleNewCardFormSubmit(evt) {
         .then((newCard) => {
             closePopup(newCardPopup);
             //renderCards([newCard], userInfo);
-            const cardElement = createCard(newCard, userInfo, handleCardDelete, handleCardLike, openImagePopup);
+            const cardElement = createCard(newCard, userInf, handleCardDelete, handleCardLike, openImagePopup);
             placesList.prepend(cardElement);
             console.log(newCard.link);
         })

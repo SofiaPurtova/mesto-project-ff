@@ -40,7 +40,7 @@ export function createCard(cardData, userInfo, onCardDelete, onCardLike, onLarge
   
   // Добавляем обработчик клика для лайка
   likeButton.addEventListener('click', (event) => { 
-    onCardLike(event, cardData._id, cardData.likes);
+    onCardLike(event, cardData._id, cardData.likes, cardElement);
   });
   
   // Добавляем обработчик клика по изображению
@@ -67,7 +67,7 @@ export function handleCardDelete(event, cardId) {
 }
 
 // Функция для лайка карточки 
-export function handleCardLike(event, cardId, likes) {
+export function handleCardLike(event, cardId, likes, card) {
   // const likeButton = event.target; // Получаем элемент, на который нажали
   // likeButton.classList.toggle('card__like-button_is-active'); // Переключаем класс активности
     const likeButton = event.target; 
@@ -82,9 +82,9 @@ export function handleCardLike(event, cardId, likes) {
   
     request
     .then((updatedCardData) => {
-      const cardLikeCount = likeButton.querySelector('.button-like-count');
-      cardLikeCount,textContent = updatedCardData.likes.length;
-      likes = updatedCardData.likes;
+      const cardLikeCount = card.querySelector('.button-like-count');
+      cardLikeCount.textContent = updatedCardData.likes.length;
+      likes = updatedCardData.likes; 
     })
     .catch(err => console.error(err));
 }
