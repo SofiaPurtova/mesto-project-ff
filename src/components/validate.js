@@ -54,8 +54,7 @@ export const enableValidation = (cfg) => {
         const fieldsetList = Array.from(formElement.querySelectorAll('.form__set'));
         fieldsetList.forEach((fieldSet) => {
             setEventListeners(fieldSet, cfg);
-        });
-      //setEventListeners(formElement);
+        });s
     });
 }
 
