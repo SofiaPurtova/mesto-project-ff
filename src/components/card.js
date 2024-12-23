@@ -74,17 +74,16 @@ export function handleCardLike(event, cardId, likes, card) {
     let request; 
     if (!isLiked) {
       request = putLike(cardId);
-      likeButton.classList.toggle('card__like-button_is-active');
     } else {
       request = deleteLike(cardId);
-      likeButton.classList.toggle('card__like-button_is-active');
     }
   
     request
     .then((updatedCardData) => {
       const cardLikeCount = card.querySelector('.button-like-count');
       cardLikeCount.textContent = updatedCardData.likes.length;
-      likes = updatedCardData.likes; 
+      likes = updatedCardData.likes;
+      likeButton.classList.toggle('card__like-button_is-active');
     })
     .catch(err => console.error(err));
 }

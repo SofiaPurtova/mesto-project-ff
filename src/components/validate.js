@@ -28,7 +28,7 @@ const isValid = (formElement, inputElement, cfg) => {
 }
 
 const checkInputValidity = (formElement, inputElement, cfg) => {
-    isValid(formElement, inputElement, cfg);s
+    isValid(formElement, inputElement, cfg);
 }
 
 function setEventListeners (formElement, cfg) {
