@@ -68,16 +68,16 @@ export function handleCardDelete(event, cardId) {
 
 // Функция для лайка карточки 
 export function handleCardLike(event, cardId, likes, card) {
-  // const likeButton = event.target; // Получаем элемент, на который нажали
-  // likeButton.classList.toggle('card__like-button_is-active'); // Переключаем класс активности
     const likeButton = event.target; 
-    const isLiked = likeButton.classList.toggle('card__like-button_is-active'); 
+    const isLiked = likeButton.classList.contains("card__like-button_is-active"); 
   
     let request; 
-    if (isLiked) {
+    if (!isLiked) {
       request = putLike(cardId);
+      likeButton.classList.toggle('card__like-button_is-active');
     } else {
       request = deleteLike(cardId);
+      likeButton.classList.toggle('card__like-button_is-active');
     }
   
     request

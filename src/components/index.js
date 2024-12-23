@@ -74,7 +74,7 @@ Promise.all([getProfileInfo(), getInitialCards()])
     })
 
 // Функция для отображения всех карточек 
-function renderCards(cards, userInfo) {                                                                        // Передаю в функцию массив, который надо вывести 
+function renderCards(cards) {                                                                        // Передаю в функцию массив, который надо вывести 
     cards.forEach(card => { 
         const cardElement = createCard(card, userInf, handleCardDelete, handleCardLike, openImagePopup);    // Создаем карточку 
         placesList.append(cardElement);                                                           // Добавляем карточку в список 
@@ -87,7 +87,7 @@ document.querySelector('.profile__edit-button').addEventListener('click', () => 
     // Заполняем поля ввода значениями из профиля
     nameInput.value = profileTitle.textContent;  
     descriptionInput.value = profileDescription.textContent;  
-    clearValidation(editPopup);       // очищаем ошибки валидации формы и делаем кнопку неактивной 
+    clearValidation(editPopup, settings);       // очищаем ошибки валидации формы и делаем кнопку неактивной 
     openPopup(editPopup);  
 });
 
@@ -98,7 +98,6 @@ const profileFormElement = editPopup.querySelector('.popup__form');
 function handleProfileFormSubmit(evt) {  
     evt.preventDefault(); // Отменяем стандартную отправку формы.
     renderLoading(evt, 'Сохранение...');
-    clearValidation(editPopup);
     // Получаем значение полей jobInput и nameInput из свойства value
     const newName = nameInput.value;  
     const newJob = descriptionInput.value;
@@ -145,7 +144,7 @@ closeButtons.forEach(button => {
 profileAvatar.addEventListener('click', () => {
     avatarInput.value = getComputedStyle(profileAvatar).backgroundImage.slice(5, -2);
     openPopup(editAvatarPopup);
-    clearValidation(editAvatarPopup);
+    clearValidation(editAvatarPopup, settings);
     
 });
 
@@ -156,7 +155,6 @@ const newAvatarElement = editAvatarPopup.querySelector('.popup__form');
 function handleNewAvatarFormSubmit(evt) {
     evt.preventDefault();
     renderLoading(evt, 'Сохранение...');
-    clearValidation(editAvatarPopup);
 
     const newAvatar = avatarInput.value;
     console.log('Новый аватар:', newAvatar);
@@ -179,11 +177,11 @@ newAvatarElement.addEventListener('submit',  handleNewAvatarFormSubmit);
 
 // Открытие модального окна добавления новой карточки 
 document.querySelector('.profile__add-button').addEventListener('click', () => {   
-    clearValidation(newCardPopup);
     openPopup(newCardPopup);   
     // Обнуляем поля формы
     titleInput.value = '';
     imageInput.value = '';
+    clearValidation(newCardPopup, settings);
 });  
 
 // Находим форму добавления карточки в DOM 
@@ -193,7 +191,6 @@ const newCardFormElement = newCardPopup.querySelector('.popup__form');
 function handleNewCardFormSubmit(evt) {   
     evt.preventDefault(); // Отменяем стандартную отправку формы. 
     renderLoading(evt, 'Создание...');
-    clearValidation(newCardPopup);
 
     const cardData = {
         name: titleInput.value,
